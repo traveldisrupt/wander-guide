@@ -1,0 +1,191 @@
+/* Font weights: 100,300,400,700,900 */
+
+body {
+    font-family: 'Lato', sans-serif;
+}
+
+.navigationBar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 65px;
+    background: #FFFFFF;
+    z-index: 100000;
+}
+
+.navigationBar .logo {
+    width: 40px;
+    margin-top: -11px;
+    display: inline-block;
+    margin-right: 10px;
+}
+
+.navLeft, .navRight {
+    padding-left: 15px;
+    padding-right: 30px;
+}
+
+.navigationBar .navLeft {
+    float: left;
+}
+
+.navigationBar .navRight {
+    float: right;
+}
+
+#navTitle {
+    color: #F15C5C;
+    font-size: 30px;
+    font-weight: 900;
+    margin-top: 8px;
+    display: inline-block;
+}
+
+#map {
+    position: absolute;
+    top: 65px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+}
+
+.navRight .toggle {
+    margin-top: 25px;
+}
+
+.mapOverlay {
+    position: absolute;
+    top: 65px;
+    bottom: 0px;
+    left: 0px;
+    right: 0px;
+    background: #000000;
+    opacity: 0.0;
+    transition: opacity 0.2s;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.mapOverlay.shown {
+    opacity: 0.7;
+    pointer-events: auto;
+}
+
+.waitingImg {
+    margin: 180px auto 50px;
+    display: block;
+}
+
+.waitingText {
+    font-weight: 300;
+    text-align: center;
+    margin-top: 0px;
+    color: #fff;
+    font-size: 30px;
+}
+
+.rightTray {
+    background: transparent;
+    position: fixed;
+    right: 0;
+    top: 65px;
+    bottom: 0;
+    width: 350px;
+    z-index: 1001;
+    padding: 20px;
+    padding-top: 40px;
+    overflow: scroll;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.rightTray.shown {
+    pointer-events: auto;
+    opacity: 1;
+}
+
+.infoCard {
+    width: 100%;
+    border-radius: 4px;
+    background: #fff;
+    box-shadow: 0px 2px 17px 0px rgba(0,0,0,0.09);
+    position: relative;
+    margin-bottom: 30px;
+}
+
+.infoCardLabel {
+    background: #F15C5C;
+    border-radius: 4px;
+    color: #ffffff;
+    position: absolute;
+    left: 12px;
+    top: -10px;
+    overflow: hidden;
+    box-shadow: 0px 2px 17px 0px rgba(0,0,0,0.09);
+}
+
+.infoCardLabelPrimary, .infoCardLabelSecondary {
+    padding: 4px 10px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.infoCardLabelPrimary {
+    display: inline-block;
+}
+
+.infoCardLabelSecondary {
+    float: right;
+    display: inline-block;
+    background: #DC4F4F;
+}
+
+.infoCardContent {
+    padding: 25px 12px 10px;
+}
+
+.toggle {
+    position: relative; width: 53px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+
+.toggle-checkbox {
+    display: none;
+}
+
+.toggle-label {
+    display: block; overflow: hidden; cursor: pointer;
+    height: 13px; padding: 0; line-height: 13px;
+    border: 0px solid #F15C5C; border-radius: 33px;
+    background-color: #F2F2F2;
+}
+
+.toggle-label:before {
+    content: "";
+    display: block; width: 33px; margin: -10px;
+    background: #EEEEEE;
+    position: absolute; top: 0; bottom: 0;
+    right: 36px;
+    border-radius: 33px;
+    transition: right 0.2s, background-color 0.2s;
+}
+
+.toggle-checkbox:checked + .toggle-label {
+    background-color: #F2F2F2;
+}
+
+.toggle-checkbox:checked + .toggle-label, .toggle-checkbox:checked + .toggle-label:before {
+   border-color: #F2F2F2;
+}
+
+.toggle-checkbox:checked + .toggle-label .toggle-inner {
+    margin-left: 0;
+}
+
+.toggle-checkbox:checked + .toggle-label:before {
+    right: 0px; 
+    background-color: #F15C5C; 
+    /*box-shadow: 3px 6px 18px 0px rgba(0, 0, 0, 0.2);*/
+}
