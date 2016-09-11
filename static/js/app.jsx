@@ -45,6 +45,19 @@ var API = {
         };
 
         this.post("trips/", data, success_callback, error_callback);
+    },
+    getTwilioToken: function(success_callback, error_callback) {
+        this.get("twilio/token/?user=ryan", success_callback, error_callback);
+    },
+    callTraveller: function() {
+            var params = {
+                To: "arthur"
+            };
+            console.log('Calling ' + params.To + '...');
+            Twilio.Device.connect(params);
+    },
+    endCall: function() {
+        Twilio.Device.disconnectAll();
     }
 }
 
@@ -63,6 +76,11 @@ var AppContainer = React.createClass({
     },
     componentDidMount: function() {
         this.poll();
+        API.getTwilioToken(function(data) {
+            Twilio.Device.setup(data.token);
+        }, function() {
+
+        })
     },
     poll: function() {
         API.getWorld(function(data) {
@@ -75,13 +93,13 @@ var AppContainer = React.createClass({
     },
     handleTripData: function(trip, onCompletion) {
         this.setState({
-            status: "waiting",
+            status: trip.status,
             tripID: trip.id,
             currentLocation: [trip.current_location.lat, trip.current_location.lon],
             startTime: trip.start_time,
             traveller: trip.traveler,
             startLocation: trip.start_location,
-            facts: trip.facts
+            facts: trip.facts.list
         }, onCompletion);
     },
     handleToggleOnlineStatus: function() {
@@ -89,11 +107,8 @@ var AppContainer = React.createClass({
             online: !this.state.online
         }, function() {
             if (!this.state.online && this.state.tripID) {
-                API.endTour(this.state.tripID, function() {
-
-                }, function() {
-
-                });
+                API.endCall();
+                API.endTour(this.state.tripID, function() {}, function() {});
             }
         });
     },
@@ -194,9 +209,9 @@ var InfoCard = React.createClass({
 var MapOverlay = React.createClass({
     handleStartTour: function() {
         API.startTour(this.props.state.tripID, function() {
-
+            API.callTraveller();
         }, function() {
-
+            // error
         });
     },
     render: function() {
@@ -259,11 +274,8 @@ var CallController = React.createClass({
         }.bind(this), 1000)
     },
     handleEndTour: function() {
-        API.endTour(this.props.state.tripID, function() {
-
-        }, function() {
-
-        });
+        API.endCall();
+        API.endTour(this.props.state.tripID, function() {}, function() {});
     },
     render: function() {
         if (this.props.state.status != "live" || !this.props.state.online) {
