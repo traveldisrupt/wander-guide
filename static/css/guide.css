@@ -85,6 +85,84 @@ body {
     font-size: 30px;
 }
 
+.callController {
+    padding: 10px;
+    background: #fff;
+    border-radius: 5px;
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    z-index: 10000000;
+    padding-left: 10px;
+    box-shadow: 0px 2px 17px 0px rgba(0,0,0,0.09);
+}
+
+.callControllerLeft {
+    float: left;
+    width: 60px;
+    position: relative;
+    margin-right: -4px;
+}
+
+.callIndicator {
+    position: absolute;
+    top: 20px;
+    left: -5px;
+    z-index: 100000;
+}
+
+.callTime {
+    font-weight: 300;
+    color: #000;
+    position: absolute;
+    top: 27px;
+    left: 12px;
+    font-size: 12px;
+}
+
+.callControllerRight {
+    float: right;
+}
+
+.endTourButton {
+    background: #F15C5C;
+    border-radius: 5px;
+    color: #FFFFFF;
+    border: none;
+    height: 45px;
+    padding-left: 25px;
+    padding-right: 25px;
+    font-weight: 700;
+}
+
+.requestContainer {
+
+}
+
+.requestImg {
+
+}
+
+.requestName {
+
+}
+
+.requestDescription {
+
+}
+
+.requestButton {
+
+}
+
+.requestButtonDecline {
+
+}
+
+.requestButtonAccept {
+
+}
+
 .rightTray {
     background: transparent;
     position: fixed;
@@ -144,6 +222,7 @@ body {
 
 .infoCardContent {
     padding: 25px 12px 10px;
+    font-weight: 300;
 }
 
 .toggle {
@@ -188,4 +267,186 @@ body {
     right: 0px; 
     background-color: #F15C5C; 
     /*box-shadow: 3px 6px 18px 0px rgba(0, 0, 0, 0.2);*/
+}
+
+.cssload-loader {
+    margin: 0;
+    right: 0;
+    width: 61px;
+}
+
+.cssload-loader ul {
+    margin: 0;
+    list-style: none;
+    width: 61px;
+    height: 44px;
+    position: relative;
+    padding: 0;
+    height: 5px;
+}
+.cssload-loader ul li {
+    position: absolute;
+    width: 7px;
+    height: 0;
+    background-color: rgb(241,92,92);
+    bottom: 0;
+    border-radius: 3.5px;
+}
+
+.cssload-loader li:nth-child(1) {
+    left: 0;
+    animation: cssload-sequence1 0.95s ease infinite 0;
+        -o-animation: cssload-sequence1 0.95s ease infinite 0;
+        -ms-animation: cssload-sequence1 0.95s ease infinite 0;
+        -webkit-animation: cssload-sequence1 0.95s ease infinite 0;
+        -moz-animation: cssload-sequence1 0.95s ease infinite 0;
+}
+.cssload-loader li:nth-child(2) {
+    left: 10px;
+    animation: cssload-sequence2 0.95s ease infinite 0.095s;
+        -o-animation: cssload-sequence2 0.95s ease infinite 0.095s;
+        -ms-animation: cssload-sequence2 0.95s ease infinite 0.095s;
+        -webkit-animation: cssload-sequence2 0.95s ease infinite 0.095s;
+        -moz-animation: cssload-sequence2 0.95s ease infinite 0.095s;
+}
+.cssload-loader li:nth-child(3) {
+    left: 20px;
+    animation: cssload-sequence1 0.95s ease-in-out infinite 0.19s;
+        -o-animation: cssload-sequence1 0.95s ease-in-out infinite 0.19s;
+        -ms-animation: cssload-sequence1 0.95s ease-in-out infinite 0.19s;
+        -webkit-animation: cssload-sequence1 0.95s ease-in-out infinite 0.19s;
+        -moz-animation: cssload-sequence1 0.95s ease-in-out infinite 0.19s;
+}
+.cssload-loader li:nth-child(4) {
+    left: 30px;
+    animation: cssload-sequence2 0.95s ease-in infinite 0.285s;
+        -o-animation: cssload-sequence2 0.95s ease-in infinite 0.285s;
+        -ms-animation: cssload-sequence2 0.95s ease-in infinite 0.285s;
+        -webkit-animation: cssload-sequence2 0.95s ease-in infinite 0.285s;
+        -moz-animation: cssload-sequence2 0.95s ease-in infinite 0.285s;
+}
+.cssload-loader li:nth-child(5) {
+    left: 40px;
+    animation: cssload-sequence1 0.95s ease-in-out infinite 0.38s;
+        -o-animation: cssload-sequence1 0.95s ease-in-out infinite 0.38s;
+        -ms-animation: cssload-sequence1 0.95s ease-in-out infinite 0.38s;
+        -webkit-animation: cssload-sequence1 0.95s ease-in-out infinite 0.38s;
+        -moz-animation: cssload-sequence1 0.95s ease-in-out infinite 0.38s;
+}
+.cssload-loader li:nth-child(6) {
+    left: 51px;
+    animation: cssload-sequence2 0.95s ease infinite 0.475s;
+        -o-animation: cssload-sequence2 0.95s ease infinite 0.475s;
+        -ms-animation: cssload-sequence2 0.95s ease infinite 0.475s;
+        -webkit-animation: cssload-sequence2 0.95s ease infinite 0.475s;
+        -moz-animation: cssload-sequence2 0.95s ease infinite 0.475s;
+}
+
+
+@keyframes cssload-sequence1 {
+    0% {
+        height: 7px;
+    }
+    50% {
+        height: 18px;
+    }
+    100% {
+        height: 7px;
+    }
+}
+
+@-o-keyframes cssload-sequence1 {
+    0% {
+        height: 7px;
+    }
+    50% {
+        height: 18px;
+    }
+    100% {
+        height: 7px;
+    }
+}
+
+@-ms-keyframes cssload-sequence1 {
+    0% {
+        height: 7px;
+    }
+    50% {
+        height: 18px;
+    }
+    100% {
+        height: 7px;
+    }
+}
+
+@-webkit-keyframes cssload-sequence1 {
+    0% {
+        height: 7px;
+    }
+    50% {
+        height: 18px;
+    }
+    100% {
+        height: 7px;
+    }
+}
+
+@-moz-keyframes cssload-sequence1 {
+    0% {
+        height: 7px;
+    }
+    50% {
+        height: 18px;
+    }
+    100% {
+        height: 7px;
+    }
+}
+
+@keyframes cssload-sequence2 {
+    0% {
+        height: 13px;
+    }
+    50% {
+        height: 22px;
+    }
+    100% {
+        height: 13px;
+    }
+}
+
+@-o-keyframes cssload-sequence2 {
+    0% {
+        height: 13px;
+    }
+    50% {
+        height: 22px;
+    }
+    100% {
+        height: 13px;
+    }
+}
+
+@-ms-keyframes cssload-sequence2 {
+    0% {
+        height: 13px;
+    }
+    50% {
+        height: 22px;
+    }
+    100% {
+        height: 13px;
+    }
+}
+
+@-webkit-keyframes cssload-sequence2 {
+    0% {
+        height: 13px;
+    }
+    50% {
+        height: 22px;
+    }
+    100% {
+        height: 13px;
+    }
 }

@@ -33,20 +33,14 @@ var API = {
 var AppContainer = React.createClass({
     getInitialState: function() {
         return {
-            status: "tour",
+            status: "idle",
+            tripID: null,
+            currentLocation: null,
+            startTime: null,
+            traveller: null,
+            startLocation: null,
             online: false,
-            facts: [
-                {
-                    category: "LANDMARK",
-                    distance: "0.2 MI",
-                    text: "This is some cool shit right here. And heres an interesting fact about it."
-                },
-                {
-                    category: "LANDMARK",
-                    distance: "0.2 MI",
-                    text: "This is some cool shit right here. And heres an interesting fact about it."
-                }
-            ]
+            facts: []
         };
     },
     componentDidMount: function() {
@@ -54,12 +48,23 @@ var AppContainer = React.createClass({
     },
     poll: function() {
         API.getWorld(function(data) {
-            console.log(data);
-
-            this.poll();
+            this.handleTripData(data.data.trip, function() {
+                this.poll();
+            }.bind(this));
         }.bind(this), function(error) {
             this.poll()
         }.bind(this));
+    },
+    handleTripData: function(trip, onCompletion) {
+        this.setState({
+            status: "live",
+            tripID: trip.id,
+            currentLocation: trip.current_location,
+            startTime: trip.start_time,
+            traveller: trip.traveller,
+            startLocation: trip.start_location,
+            facts: trip.facts
+        }, onCompletion);
     },
     handleToggleOnlineStatus: function() {
         this.setState({
@@ -68,7 +73,14 @@ var AppContainer = React.createClass({
     },
     render: function() {
 
-        var overlayShown = (this.state.status == "waiting" && this.state.online);
+        var live = this.state.status == "live" && this.state.online;
+        var overlayShown = ((this.state.status == "waiting" || this.state.status == "no_trips") && this.state.online);
+        var icon = L.icon({
+            iconUrl: '/static/images/profile-pic.png',
+            iconRetinaUrl: '/static/images/profile-pic@2x.png',
+            iconSize: [40, 64],
+            iconAnchor: [19, 64]
+        });
 
         return (
             <div className="appContainer">
@@ -79,9 +91,16 @@ var AppContainer = React.createClass({
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         detectRetina="true"
                     />
+                    <ReactLeaflet.Marker 
+                        position={[37.7889997, -122.4315116]}
+                        icon={icon}
+                    />
+
+
                 </ReactLeaflet.Map>
-                <MapOverlay shown={overlayShown} status={this.state.status} />
+                <MapOverlay state={this.state} shown={overlayShown} />
                 <RightTray state={this.state} />
+                <CallController state={this.state} />
             </div>
         )
     }
@@ -89,7 +108,7 @@ var AppContainer = React.createClass({
 
 var RightTray = React.createClass({
     render: function() {
-        var _class = "rightTray" + (this.props.state.status == "tour" && this.props.state.online ? " shown" : "");
+        var _class = "rightTray" + (this.props.state.status == "live" && this.props.state.online ? " shown" : "");
         return (
             <div className={_class}>
                 {this.props.state.facts.map(function(fact, i){
@@ -124,19 +143,77 @@ var MapOverlay = React.createClass({
     render: function() {
         var _class = "mapOverlay" + (this.props.shown ? " shown" : "");
         var content = null;
-        if (this.props.status == "waiting") {
+        if (this.props.state.status == "no_trips") { // waiting, live, cancelled, no_trips
             content = <div>
                 <img className="waitingImg" src="/static/images/ring.svg"></img>
                 <p className="waitingText">Waiting for tour requests...</p>
             </div>
-        } else if (this.props.status == "requesting") {
-            content = <div>
-                <p className="waitingText">test</p>
+        } else if (this.props.state.status == "waiting") {
+            content = <div className="requestContainer">
+                <img className="requestImg" src=""></img>
+                <p className="requestName"></p>
+                <p className="requestDescription"></p>
+                <button className="requestButton requestButtonDecline">DECLINE</button>
+                <button className="requestButton requestButtonAccept">START TOUR</button>
             </div>
+        } else if (this.props.state.status == "live") {
+            content = null;
         }
         return (
             <div className={_class}>
                 {content}
+            </div>
+        )
+    }
+});
+
+var Loader = React.createClass({
+    render: function() {
+        var _class = "callIndicator cssload-loader";
+        return (
+            <div className={_class}>
+                <ul>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                    <li></li>
+                </ul>
+            </div>
+        )
+    }
+});
+
+var CallController = React.createClass({
+    getInitialState: function() {
+        return {
+            secondsElapsed: 0
+        };
+    },
+    componentDidMount: function() {
+        this.start();
+    },
+    start: function() {
+        setInterval(function() {
+            var seconds = this.state.secondsElapsed;
+            this.setState({secondsElapsed: seconds + 1})
+        }.bind(this), 1000)
+    },
+    render: function() {
+        var seconds = this.state.secondsElapsed % 60;
+        var minutes = (this.state.secondsElapsed - seconds) / 60;
+        var timeStr = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+        return (
+            <div className="callController">
+                <div className="callControllerLeft">
+                    <Loader />
+                    <div className="callTime">
+                        {timeStr}
+                    </div>
+                </div>
+                <div className="callControllerRight">
+                    <button className="endTourButton">END TOUR</button>
+                </div> 
             </div>
         )
     }
