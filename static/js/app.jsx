@@ -1,5 +1,5 @@
 var API = {
-    baseURL: "http://api.wander.host/api/1/",
+    baseURL: "https://api.wander.host/api/1/",
     request: function(relative_url, method, success_callback, error_callback, data) {
         $.ajax({
             url: this.baseURL + relative_url,
@@ -27,13 +27,31 @@ var API = {
     },
     getWorld: function(success_callback, error_callback) {
         this.get("trips", success_callback, error_callback);
+    },
+    startTour: function(tripID, success_callback, error_callback) {
+        var data = {
+            username: "ford_prefect",
+            action: "accept",
+            trip_id: tripID
+        };
+
+        this.post("trips/", data, success_callback, error_callback);
+    },
+    endTour: function(tripID, success_callback, error_callback) {
+        var data = {
+            username: "ford_prefect",
+            action: "cancel",
+            trip_id: tripID
+        };
+
+        this.post("trips/", data, success_callback, error_callback);
     }
 }
 
 var AppContainer = React.createClass({
     getInitialState: function() {
         return {
-            status: "idle",
+            status: "no_trips",
             tripID: null,
             currentLocation: null,
             startTime: null,
@@ -57,11 +75,11 @@ var AppContainer = React.createClass({
     },
     handleTripData: function(trip, onCompletion) {
         this.setState({
-            status: "live",
+            status: "waiting",
             tripID: trip.id,
-            currentLocation: trip.current_location,
+            currentLocation: [trip.current_location.lat, trip.current_location.lon],
             startTime: trip.start_time,
-            traveller: trip.traveller,
+            traveller: trip.traveler,
             startLocation: trip.start_location,
             facts: trip.facts
         }, onCompletion);
@@ -69,6 +87,14 @@ var AppContainer = React.createClass({
     handleToggleOnlineStatus: function() {
         this.setState({
             online: !this.state.online
+        }, function() {
+            if (!this.state.online && this.state.tripID) {
+                API.endTour(this.state.tripID, function() {
+
+                }, function() {
+
+                });
+            }
         });
     },
     render: function() {
@@ -78,23 +104,43 @@ var AppContainer = React.createClass({
         var icon = L.icon({
             iconUrl: '/static/images/profile-pic.png',
             iconRetinaUrl: '/static/images/profile-pic@2x.png',
-            iconSize: [40, 64],
-            iconAnchor: [19, 64]
+            iconSize: [40, 92],
+            iconAnchor: [19, 92]
         });
+
+        var marker = this.state.online && (this.state.status == "live" || this.state.status == "waiting") ? <ReactLeaflet.Marker 
+            position={this.state.currentLocation}
+            icon={icon}
+        /> : null;
+
+        var mapCenter = this.state.online && this.state.status != "no_trips" ? this.state.currentLocation : [37.793656, -122.43007];
+        var zoom = this.state.online && this.state.status != "no_trips" ? 16 : 14;
+
+        var loginSuggestion = this.state.online ? null : <div className="loginSuggestion">
+            <div className="arrowUp"></div>
+            Go online and start accepting tours.
+        </div>;
 
         return (
             <div className="appContainer">
-                <NavigationBar online={this.state.online} onToggleOnlineStatus={this.handleToggleOnlineStatus} />
-                <ReactLeaflet.Map id="map" center={[37.7889997, -122.4315116]} zoom={14}>
+                <NavigationBar state={this.state} online={this.state.online} onToggleOnlineStatus={this.handleToggleOnlineStatus} />
+                {loginSuggestion}
+                <ReactLeaflet.Map id="map" center={mapCenter} zoom={zoom}>
                     <ReactLeaflet.TileLayer
                         url='https://api.mapbox.com/styles/v1/mapbox/light-v9/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoibm9ydG9ucnlhbjEiLCJhIjoiY2lzMWs4eG5iMDd2NDJubXoweXMzdmY0OSJ9.tzK9XEGav_T36H_wYM4isg'
                         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
                         detectRetina="true"
                     />
-                    <ReactLeaflet.Marker 
-                        position={[37.7889997, -122.4315116]}
-                        icon={icon}
-                    />
+                    {marker}
+                    {this.state.facts.map(function(fact, i) {
+                        if (!this.state.online || this.state.status != "live") {
+                            return null;
+                        }
+                        return <ReactLeaflet.Marker
+                            position={[fact.lat, fact.lon]}
+                            icon={new L.Icon.Default}
+                        />;
+                    }.bind(this))}
 
 
                 </ReactLeaflet.Map>
@@ -111,6 +157,11 @@ var RightTray = React.createClass({
         var _class = "rightTray" + (this.props.state.status == "live" && this.props.state.online ? " shown" : "");
         return (
             <div className={_class}>
+                <div className="headerCard">
+                    <div className="headerCardTitle">SUGGESTIONS</div>
+                    Nearby places to suggest to your wanderer.
+                    <div className="arrowDown"></div>
+                </div>
                 {this.props.state.facts.map(function(fact, i){
                     return <InfoCard fact={fact} />;
                 })}
@@ -132,6 +183,7 @@ var InfoCard = React.createClass({
                     </div>
                 </div>
                 <div className="infoCardContent">
+                    <span className="infoCardContentBold">{this.props.fact.title}</span>
                     {this.props.fact.text}
                 </div>
             </div>
@@ -140,21 +192,28 @@ var InfoCard = React.createClass({
 });
 
 var MapOverlay = React.createClass({
+    handleStartTour: function() {
+        API.startTour(this.props.state.tripID, function() {
+
+        }, function() {
+
+        });
+    },
     render: function() {
         var _class = "mapOverlay" + (this.props.shown ? " shown" : "");
         var content = null;
-        if (this.props.state.status == "no_trips") { // waiting, live, cancelled, no_trips
+        if (this.props.state.status == "no_trips" && this.props.state.online) { // waiting, live, cancelled, no_trips
             content = <div>
                 <img className="waitingImg" src="/static/images/ring.svg"></img>
-                <p className="waitingText">Waiting for tour requests...</p>
+                <p className="waitingText">Waiting for wanderers...</p>
             </div>
-        } else if (this.props.state.status == "waiting") {
+        } else if (this.props.state.status == "waiting" && this.props.state.online) {
             content = <div className="requestContainer">
-                <img className="requestImg" src=""></img>
-                <p className="requestName"></p>
-                <p className="requestDescription"></p>
+                <img className="requestImg" src="https://scontent-sjc2-1.xx.fbcdn.net/v/t1.0-1/p320x320/225624_1029986543688308_5773908915984328127_n.jpg?oh=5eab2a19c130ef2b15e8d8d5fac69468&oe=5844F020"></img>
+                <p className="requestName">{this.props.state.traveller.name}</p>
+                <p className="requestDescription">is new to the city and would like a guided tour</p>
                 <button className="requestButton requestButtonDecline">DECLINE</button>
-                <button className="requestButton requestButtonAccept">START TOUR</button>
+                <button onClick={this.handleStartTour} className="requestButton requestButtonAccept">START TOUR</button>
             </div>
         } else if (this.props.state.status == "live") {
             content = null;
@@ -199,7 +258,18 @@ var CallController = React.createClass({
             this.setState({secondsElapsed: seconds + 1})
         }.bind(this), 1000)
     },
+    handleEndTour: function() {
+        API.endTour(this.props.state.tripID, function() {
+
+        }, function() {
+
+        });
+    },
     render: function() {
+        if (this.props.state.status != "live" || !this.props.state.online) {
+            return null;
+        }
+
         var seconds = this.state.secondsElapsed % 60;
         var minutes = (this.state.secondsElapsed - seconds) / 60;
         var timeStr = minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
@@ -212,7 +282,7 @@ var CallController = React.createClass({
                     </div>
                 </div>
                 <div className="callControllerRight">
-                    <button className="endTourButton">END TOUR</button>
+                    <button onClick={this.handleEndTour} className="endTourButton">END TOUR</button>
                 </div> 
             </div>
         )

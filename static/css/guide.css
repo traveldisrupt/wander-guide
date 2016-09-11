@@ -4,6 +4,23 @@ body {
     font-family: 'Lato', sans-serif;
 }
 
+button {
+    outline: none !important;
+    transition: opacity 0.2s;
+}
+
+button:hover {
+    opacity: 0.8 !important;
+}
+
+.leaflet-bar {
+    box-shadow: 0px 2px 17px 0px rgba(0,0,0,0.09);
+}
+
+.leaflet-control-zoom-in {
+    border-bottom: none !important;
+}
+
 .navigationBar {
     position: fixed;
     top: 0;
@@ -60,15 +77,14 @@ body {
     bottom: 0px;
     left: 0px;
     right: 0px;
-    background: #000000;
-    opacity: 0.0;
-    transition: opacity 0.2s;
+    transition: background 0.2s;
     z-index: 1000;
     pointer-events: none;
+    background-color: rgba(0,0,0,0);
 }
 
 .mapOverlay.shown {
-    opacity: 0.7;
+    background-color: rgba(0,0,0,0.7);
     pointer-events: auto;
 }
 
@@ -136,15 +152,23 @@ body {
 }
 
 .requestContainer {
-
+    margin: 200px auto;
+    display: block;
+    width: 500px;
+    color: #fff;
+    text-align: center;
 }
 
 .requestImg {
-
+    width: 100px;
+    border-radius: 100%;
+    margin: 20px auto;
+    display: block;
 }
 
 .requestName {
-
+    font-size: 20px;
+    margin-bottom: 10px;
 }
 
 .requestDescription {
@@ -152,15 +176,36 @@ body {
 }
 
 .requestButton {
-
+    width: 140px;
+    border: none;
+    height: 50px;
+    border-radius: 4px;
+    margin: 5px;
+    font-weight: 700;
 }
 
 .requestButtonDecline {
-
+    background: #fff;
+    color: #222;
 }
 
 .requestButtonAccept {
+    background: #F15C5C;
+    color: #fff;
+}
 
+.loginSuggestion {
+    width: 235px;
+    border-radius: 4px;
+    box-shadow: 0px 2px 17px 0px rgba(0,0,0,0.09);
+    background: #F15C5C;
+    color: #fff;
+    padding: 12px;
+    font-weight: 300;
+    position: absolute;
+    right: 20px;
+    top: 70px;
+    z-index: 100000;
 }
 
 .rightTray {
@@ -182,6 +227,48 @@ body {
 .rightTray.shown {
     pointer-events: auto;
     opacity: 1;
+}
+
+.headerCard {
+    width: 100%;
+    border-radius: 4px;
+    box-shadow: 0px 2px 17px 0px rgba(0,0,0,0.09);
+    background: #F15C5C;
+    color: #fff;
+    padding: 12px;
+    margin-bottom: 30px;
+    margin-top: -10px;
+    font-weight: 300;
+    position: relative;
+}
+
+.headerCardTitle {
+    font-weight: 900;
+    font-size: 16px;
+    margin-bottom: 2px;
+}
+
+.arrowDown {
+  width: 0; 
+  height: 0; 
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 20px solid #f00;
+  position: absolute;
+  bottom: -10px;
+  border-top: 20px solid #F15C5C;
+  right: 20px;
+}
+
+.arrowUp {
+  width: 0; 
+  height: 0; 
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  position: absolute;
+  top: -10px;
+  border-bottom: 20px solid #F15C5C;
+  right: 20px;
 }
 
 .infoCard {
@@ -223,6 +310,12 @@ body {
 .infoCardContent {
     padding: 25px 12px 10px;
     font-weight: 300;
+}
+
+.infoCardContentBold {
+    font-weight: 700;
+    margin-right: 8px;
+    font-size: 16px;
 }
 
 .toggle {
